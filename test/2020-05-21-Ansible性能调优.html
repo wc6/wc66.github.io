@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Ansible性能调优"><meta name="keywords"><meta name="author" content="蝶影双双"><meta name="copyright" content="蝶影双双"><meta name="theme-color" content="#0078E7"><title>Ansible性能调优 | 蝶影双双的小镇</title><link rel="shortcut icon" href="/wc_favicon.ico"><link rel="mask-icon" href="/wc_favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    window.CONFIG = {"root":"/","title":"蝶影双双的小镇","version":"0.7.0","anonymous_image":"https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_rtqh36oinzl.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><link rel="preconnect" href="https://stats.g.doubleclick.net" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=UA-167189784-1"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-167189784-1');</script><script data-ad-client="ca-pub-6473747881546586" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><style>.google-auto-placed {
+  overflow: auto;
+}</style><div class="js-Pjax"></div><meta name="generator" content="Hexo 4.2.1"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle sidebar-toggle-fixed hty-icon-button"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><aside class="sidebar"><div class="sidebar-panel sidebar-panel-active" id="site-overview-wrap"><div class="site-info"><a class="site-author-avatar" href="/about" title="蝶影双双"><img width="96" loading="lazy" src="/wc.jpg" alt="蝶影双双"></a><div class="site-author-name"><a href="/about/">蝶影双双</a></div><a class="site-name" href="/about/site.html">蝶影双双的小镇</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="我的主页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item site-state-posts"><a href="/archives" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">29</span></a></div><div class="site-state-item site-state-tags"><a href="/tags" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><a class="site-state-item hty-icon-button" href="https://www.baidu.com" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=3180573630&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/wc6" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:666wc6@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=296185253" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/320721469" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div></aside><main class="sidebar-translate" id="content"><div id="page"><header class="post-header"><h1 class="post-title">Ansible性能调优</h1></header><article id="page"><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><h1 id="22-Ansible性能调优"><a href="#22-Ansible性能调优" class="headerlink" title="22. Ansible性能调优"></a>22. Ansible性能调优</h1><p>[toc]</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在当前配置管理工具大行其道的应用中，ansible凭借其轻量级、agentless等特性得以占据一席之地。然而其也并不是完美无缺，事实上，其最为人所诟病的就是在大规模服务器应用场景当中表现出的性能问题。所以本篇文档就来说一说如何通过一些配置优化来加速ansible的运行。</p>
+<h2 id="SSH-Multiplexing"><a href="#SSH-Multiplexing" class="headerlink" title="SSH Multiplexing"></a>SSH Multiplexing</h2><p>默认情况下，ansible基于ssh连接被控端，当ansible在运行playbook的时候，会建立很多的ssh连接来执行相应的task，而每个task都会创建一个新的ssh连接，ssh连接的建立毫无疑问需要额外tcp建立连接的开销。</p>
+<p>openssh支持一个优化，叫做ssh nultiplexing，也被称作ControlPersist。当启用了该特性，则多个连接到相同主机的ssh会话将会共享相同的tcp连接。这样就只有第一次连接的时候需要进行TCP三次握手。</p>
+<p>当启用Multiplexing后：</p>
+<ul>
+<li>第一次ssh连接到主机的时候，openssh会创建一个主连接</li>
+<li>紧接着openssh会创建一个控制套接字，通过主连接与远程主机关联</li>
+<li>当有新的ssh尝试连接到主机时，openssh将使用控制套接字与远程主机通信，并不会创建新的tcp连接</li>
+</ul>
+<p>开启该配置项：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#cat ansible.cfg</span><br><span class="line">[ssh_connection]</span><br><span class="line">ssh_args &#x3D; -C -o ControlMaster&#x3D;auto -o ControlPersist&#x3D;10m</span><br></pre></td></tr></table></figure>
+
+<p>配置项说明：</p>
+<ul>
+<li>ControlMaster：启用ssh multiplexing，auto用于告诉ssh在主连接和控制套接字不存在的情况下，自动创建它们</li>
+<li>ControlPersist：在主连接和控制套接字创建后的多长时间内，如果一直没有ssh连接，就关闭它们。</li>
+</ul>
+<h2 id="pipelining"><a href="#pipelining" class="headerlink" title="pipelining"></a>pipelining</h2><p>在说明pipelining之前，需要先了解下ansible是如何执行一个task的：</p>
+<ol>
+<li>基于playbook中的task生成一个python脚本</li>
+<li>将生成的python脚本复制到被控主机上</li>
+<li>在被控主机上运行这个脚本</li>
+</ol>
+<p>上面三个步骤中，后面两个步骤会产生两个ssh会话。而在pipelinin模式下，ansible执行python脚本时并不会复制它，而是通过管道传递给ssh会话。这样一来，就会让原本需要的两个ssh会话减少为一个，以降低开销，节省时间。</p>
+<p>启用pipelining：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#cat ansible.cfg</span><br><span class="line">[defaults]</span><br><span class="line">pipelining &#x3D; True</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，如果开启pipelining，则需要在被控端的/etc/sudoers文件中关闭requiretty：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#cat /etc/sudoers.d/ansible</span></span><br><span class="line">ansible    ALL=(ALL)       NOPASSWD:ALL</span><br><span class="line">Defaults:ansible !requiretty</span><br></pre></td></tr></table></figure>
+
+<h2 id="并发执行"><a href="#并发执行" class="headerlink" title="并发执行"></a>并发执行</h2><p>默认情况下，ansible在批量连接客户端执行play时的并发数是5个，可以通过调整该值来提高并发数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[defaults]</span><br><span class="line">forks &#x3D; 20</span><br></pre></td></tr></table></figure>
+
+<p>即使提高了并发个数，playbook也可能在执行一个需要较长时间的任务时导致阻塞，针对这类任务，可以使用异步的方式来运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- hosts: all</span><br><span class="line">  tasks:</span><br><span class="line">    - name: Install mlocate</span><br><span class="line">      yum: </span><br><span class="line">        name: mlocate </span><br><span class="line">        state: installed</span><br><span class="line">    - name: Run updatedb</span><br><span class="line">      command: &#x2F;usr&#x2F;bin&#x2F;updatedb</span><br><span class="line">      async:300</span><br><span class="line">      poll:10</span><br></pre></td></tr></table></figure>
+
+<p>当使用上面的任务控制超过forks设置的节点个数时，’install mlocate’任务会先在<code>forks</code>个节点上跑，完成后再继续下一批，这个并发数是由我们设置的<code>forks</code>选项控制的。而’Run updatedb’这个任务会一次性在所有节点上都执行，执行的超时时间为300s，然后每10s轮循一次检查它是否完成。需要说明的是，因为需要等待其执行完成，所以如果这个任务比较耗时，仍然需要等待其执行完毕后才能开始下一个任务。</p>
+<p>但是如果该任务只是一个后台任务，比如只是在后台执行一个脚本或者启动一个服务，不需要等待其返回结果。那就不需要检查这个任务是否完成，只需要继续执行其它任务，最后再使用wait_for这个模块去检查之前的脚本或者服务是否按预期中运行了便可。这时候只需要把poll的值设置为0，便可以按上面的要求配置ansible不等待job的完成。</p>
+<p>还有一种需求，假如一个task，它就是需要运行很长的时间，不能让它超时退出，需要一直等待这个task完成。这个时候就需要将async的值设置为0。</p>
+<p>总结来说，大概有以下的一些场景需要使用到ansible的polling特性：</p>
+<ul>
+<li>某个task需要运行很长的时间,这个task很可能会达到timeout。</li>
+<li>某个task需要在大量的机器上面运行</li>
+<li>某个task是不需要等待它完成的</li>
+</ul>
+<p>当然也有一些场景是不适合使用：</p>
+<ul>
+<li>这个任务是需要运行完后才能继续另外的任务的</li>
+<li>这个任务能很快的完成</li>
+</ul>
+<h2 id="accelerate模式"><a href="#accelerate模式" class="headerlink" title="accelerate模式"></a>accelerate模式</h2><p>Ansible官方建议在可以使用pipelining的情况下，尽量使用pipelining而不是accelerate模式。accelerate只在如下情况下有用处：</p>
+<ul>
+<li>管理centos6或者更早的那些依然使用paramikio作为连接被控节点的场景</li>
+<li>无法使用pipelining的场景</li>
+</ul>
+<p>加速模式通过启动一个临时的 SSH守护进程来工作。只要这个守护进程在运行，Ansible将会直接通过socket来连接。Ansible通过在连接时交换临时的AES key来确保安全(这个秘钥对每个主机都是不同的并且会定期重新生成).。默认配置下，Ansible会为加速模式开启5099端口(此配置可修改)。一旦运行了，守护进程将会维持连接30分钟，过了时限后该连接将会自动终结，你需要重启一个 SSH。</p>
+<p>accelerate模式配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#cat ansible.cfg</span><br><span class="line">[accelerate]</span><br><span class="line">accelerate_port &#x3D; 5099</span><br><span class="line">accelerate_timeout &#x3D; 30</span><br><span class="line">accelerate_connect_timeout &#x3D; 5.0</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>需要说明的是，如果要开启accelerate模式，需要在管理端和被控端都安装python-keyczar软件包</p>
+</blockquote>
+</div></section></article><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">捐款或者加个好友呗！</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/alipay-qrcode.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/alipay-qrcode.jpg" alt="支付宝捐款" title="支付宝捐款"></a><div><span style="color:#00A3EE"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-alipay-line"></use></svg></span></div></div><div style="display:inline-block"><a href="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/qq.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/qq.jpg" alt="QQ加友" title="QQ加友"></a><div><span style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></span></div></div><div style="display:inline-block"><a href="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/wechat.png" target="_blank" rel="noopener"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/wechat.png" alt="微信加友" title="微信加友"></a><div><span style="color:#2DC100"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-wechat-pay-line"></use></svg></span></div></div></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>若您无 GitHub 账号，可直接在下方匿名评论。</span><br><span>若您想及时得到回复提醒，建议跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/wc6/wc6.github.io/issues?q=is:issue+Ansible性能调优" target="_blank" rel="noopener">GitHub Issues</a></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 蝶影双双</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v4.2.1</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v0.7.0</span></div><div class="live_time"><span>本博客已萌萌哒地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-05-20T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script defer src="/js/search/index.js"></script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/hexo-theme-yun.js"></script></body></html>
