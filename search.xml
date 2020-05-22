@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>Centos install sftp</title>
+      <link href="/2020/05/22/Centos-install-sftp/"/>
+      <url>/2020/05/22/Centos-install-sftp/</url>
+      
+        <content type="html"><![CDATA[<h3 id="CentOS-install-sftp"><a href="#CentOS-install-sftp" class="headerlink" title="CentOS install sftp"></a>CentOS install sftp</h3><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><ol><li>创建用户，创建用户组，添加用户到用户组,禁止用户登录。</li><li>创建用户登录的目录</li><li>设置用户的密码</li><li>修改ssh的配置文件，限制用户访问根目录,强制用户使用internal-sftp，指定用户主目录</li><li>设置目录权限，所属主和组，所有者须为root，用户组为sftp</li><li>重启ssh服务</li></ol><h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><ol><li>在Windows上cmd命令：sftp sftpuser@domain</li><li>即可访问目录/文件</li></ol><h4 id="操作详情"><a href="#操作详情" class="headerlink" title="操作详情"></a>操作详情</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建组</span></span><br><span class="line">groupadd sftpg</span><br><span class="line"><span class="comment"># 创建用户，并添加到组，禁止登录</span></span><br><span class="line">useradd -G sftpg -s /sbin/nologin sftpu3</span><br><span class="line">  <span class="comment"># -G 将用户添加到sftpg组</span></span><br><span class="line">  <span class="comment"># -s 用户登录后所使用的shell,这里禁止用户登录</span></span><br><span class="line"><span class="comment"># 创建sftpu3的目录</span></span><br><span class="line">mkdir /www/</span><br><span class="line">passwd sftpu3  <span class="comment"># 密码设置为123456</span></span><br><span class="line"><span class="comment"># 修改/etc/ssh/sshd_config文件</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 节选自 sshd_config 文件</span><br><span class="line">135 # override default of no subsystems</span><br><span class="line">136 Subsystem       sftp    &#x2F;usr&#x2F;libexec&#x2F;openssh&#x2F;sftp-server</span><br><span class="line">137</span><br><span class="line">138 # Example of overriding settings on a per-user basis</span><br><span class="line">139 #Match User anoncvs</span><br><span class="line">140 #       X11Forwarding no</span><br><span class="line">141 #       AllowTcpForwarding no</span><br><span class="line">142 #       PermitTTY no</span><br><span class="line">143 #       ForceCommand cvs server</span><br><span class="line">144 UseDNS no</span><br><span class="line">145 AddressFamily inet</span><br><span class="line">146 PermitRootLogin yes</span><br><span class="line">147 SyslogFacility AUTHPRIV</span><br><span class="line">148 PasswordAuthentication yes</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># sshd_config 修改后（注释136行，添加148后面）</span><br><span class="line">135 # override default of no subsystems</span><br><span class="line">136 # Subsystem     sftp    &#x2F;usr&#x2F;libexec&#x2F;openssh&#x2F;sftp-server</span><br><span class="line">137</span><br><span class="line">138 # Example of overriding settings on a per-user basis</span><br><span class="line">139 #Match User anoncvs</span><br><span class="line">140 #       X11Forwarding no</span><br><span class="line">141 #       AllowTcpForwarding no</span><br><span class="line">142 #       PermitTTY no</span><br><span class="line">143 #       ForceCommand cvs server</span><br><span class="line">144 UseDNS no</span><br><span class="line">145 AddressFamily inet</span><br><span class="line">146 PermitRootLogin yes</span><br><span class="line">147 SyslogFacility AUTHPRIV</span><br><span class="line">148 PasswordAuthentication yes</span><br><span class="line">149</span><br><span class="line">150 Subsystem       sftp    internal-sftp  # 指定sftp服务使用系统自带的internal-stfp</span><br><span class="line">151 Match   Group   sftpg  # 匹配sftp组的用户</span><br><span class="line">152 ChrootDirectory &#x2F;www&#x2F;  # sftp主目录指定到&#x2F;www&#x2F;</span><br><span class="line">153 ForceCommand    internal-sftp  # 指定sftp命令</span><br><span class="line">154 AllowTcpForwarding      no  # 用户不能使用端口转发</span><br><span class="line">155 X11Forwarding   no  # 用户不能使用端口转发</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改权限</span></span><br><span class="line">chmod 755 /www/</span><br><span class="line"><span class="comment"># 重启服务</span></span><br><span class="line">[root@Frank /]<span class="comment"># systemctl restart sshd</span></span><br><span class="line"><span class="comment"># 在sftp 目录里面添加测试文件</span></span><br><span class="line">[root@Frank /]<span class="comment"># touch /www/aa.txt</span></span><br></pre></td></tr></table></figure><h4 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打开Windows cmd </span></span><br><span class="line">sftp sftpu3@&lt;此处请填写你的IP或域名&gt;</span><br><span class="line"><span class="comment"># 然后输入密码 123456</span></span><br><span class="line">Connected to sftpu3@&lt;你的IP&gt;.</span><br><span class="line">sftp&gt; ls</span><br><span class="line">aa.txt</span><br><span class="line">sftp&gt; <span class="built_in">pwd</span></span><br><span class="line">Remote working directory: /</span><br><span class="line">sftp&gt; <span class="built_in">cd</span> ..</span><br><span class="line">sftp&gt; <span class="built_in">pwd</span></span><br><span class="line">Remote working directory: /</span><br><span class="line">sftp&gt; ls</span><br><span class="line">aa.txt</span><br><span class="line">sftp&gt;</span><br><span class="line"><span class="comment"># 此处可见，运行cd .. 命令后，目录下还是aa.txt文件，说明sftpu3 用户不准访问根目录。对于root用户而言，/www/目录就是sftpu3用户的根目录</span></span><br></pre></td></tr></table></figure><h4 id="错误排除"><a href="#错误排除" class="headerlink" title="错误排除"></a>错误排除</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 错误情况1</span></span><br><span class="line">[root@Frank /]<span class="comment"># systemctl restart sshd</span></span><br><span class="line">Job <span class="keyword">for</span> sshd.service failed because the control process exited with error code. See <span class="string">"systemctl status sshd.service"</span> and <span class="string">"journalctl -xe"</span> <span class="keyword">for</span> details.</span><br><span class="line">[root@Frank /]<span class="comment"># sshd -t</span></span><br><span class="line">/etc/ssh/sshd_config line 149: Directive <span class="string">'UseDNS'</span> is not allowed within a Match block</span><br><span class="line">[root@Frank /]<span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决方案</span></span><br><span class="line">在修改配置文件的时候，没有讲添加的内容放在最后面。正确做法如上所示，即是追加，而不是中途添加。</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 学习 </category>
+          
+          <category> 运维 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> centos </tag>
+            
+            <tag> sftp </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Docker</title>
       <link href="/2020/05/22/docker/"/>
       <url>/2020/05/22/docker/</url>
@@ -44,6 +73,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -70,6 +101,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -98,6 +131,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -124,6 +159,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -152,6 +189,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -178,6 +217,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -206,6 +247,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -232,6 +275,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -260,6 +305,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -286,6 +333,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -314,6 +363,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -340,6 +391,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -368,6 +421,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -394,6 +449,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -422,6 +479,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -448,6 +507,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -476,6 +537,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -502,6 +565,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -530,6 +595,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -556,6 +623,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -584,6 +653,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -610,6 +681,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -638,6 +711,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -664,6 +739,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -692,6 +769,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -718,6 +797,8 @@
       
       
       <categories>
+          
+          <category> 学习 </category>
           
           <category> 运维 </category>
           
@@ -746,6 +827,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -773,6 +856,8 @@
       
       <categories>
           
+          <category> 学习 </category>
+          
           <category> 运维 </category>
           
       </categories>
@@ -797,6 +882,14 @@
       
         <content type="html"><![CDATA[<h2 id="列表，元祖，字典，字符串"><a href="#列表，元祖，字典，字符串" class="headerlink" title="列表，元祖，字典，字符串"></a>列表，元祖，字典，字符串</h2><h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><ul><li><p>在 <code>ipython3</code> 中定义一个 <strong>列表</strong>，例如：<code>name_list = []</code></p></li><li><p>输入 <code>name_list.</code> 按下 <code>TAB</code> 键，<code>ipython</code> 会提示 <strong>列表</strong> 能够使用的 <strong>方法</strong> 如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: name_list.</span><br><span class="line">name_list.append   name_list.count    name_list.insert   name_list.reverse</span><br><span class="line">name_list.clear    name_list.extend   name_list.pop      name_list.sort</span><br><span class="line">name_list.copy     name_list.index    name_list.remove</span><br></pre></td></tr></table></figure><table><thead><tr><th>序号</th><th>分类</th><th align="left">关键字 / 函数 / 方法</th><th>说明</th></tr></thead><tbody><tr><td></td><td>增加</td><td align="left">列表.insert(索引, 数据)</td><td>在指定位置插入数据</td></tr><tr><td></td><td></td><td align="left">列表.append(数据)</td><td>在末尾追加数据</td></tr><tr><td></td><td></td><td align="left">列表.extend(列表2)</td><td>将列表2 的数据追加到列表</td></tr><tr><td>2</td><td>修改</td><td align="left">列表[索引] = 数据</td><td>修改指定索引的数据</td></tr><tr><td>3</td><td>删除</td><td align="left">del 列表[索引]</td><td>删除指定索引的数据</td></tr><tr><td></td><td></td><td align="left">列表.remove[数据]</td><td>删除第一个出现的指定数据</td></tr><tr><td></td><td></td><td align="left">列表.pop</td><td>删除末尾数据</td></tr><tr><td></td><td></td><td align="left">列表.pop(索引)</td><td>删除指定索引数据</td></tr><tr><td></td><td></td><td align="left">列表.clear</td><td>清空列表</td></tr><tr><td>4</td><td>统计</td><td align="left">len(列表)</td><td>列表长度</td></tr><tr><td></td><td></td><td align="left">列表.count(数据)</td><td>数据在列表中出现的次数</td></tr><tr><td>5</td><td>排序</td><td align="left">列表.sort()</td><td>升序排序</td></tr><tr><td></td><td></td><td align="left">列表.sort(reverse=True)</td><td>降序排序</td></tr><tr><td></td><td></td><td align="left">列表.reverse()</td><td>逆序、反转</td></tr></tbody></table></li></ul><h3 id="元祖"><a href="#元祖" class="headerlink" title="元祖"></a>元祖</h3><ul><li>创建元祖,元祖创建之后不可变。</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">info_tuple = ()</span><br><span class="line"><span class="comment"># 只包含一个元素 时，需要 在元素后面添加逗号</span></span><br><span class="line">info_tuple = (<span class="number">50</span>, )</span><br></pre></td></tr></table></figure><h5 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">info = (<span class="string">"wc"</span>,<span class="string">"ww"</span>,<span class="string">"cc"</span>,<span class="string">"wc"</span>)</span><br><span class="line">info.count(<span class="string">"wc"</span>)  <span class="comment"># 2 计算 wc 在元祖中出现的次数</span></span><br><span class="line">info.index(<span class="string">"wc"</span>)  <span class="comment"># 0 获得 wc 第一次出现的位置</span></span><br><span class="line">info.index(<span class="number">2</span>)  <span class="comment"># cc 取下标第三的数</span></span><br><span class="line">len(info)  <span class="comment"># 4 取元素的长度</span></span><br></pre></td></tr></table></figure><ul><li><p>list 与tuple 转换</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list(元祖)   将转换为列表</span><br><span class="line">tuple(列表)  将转为元祖</span><br></pre></td></tr></table></figure><p>​</p></li></ul><h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiaoming = &#123;<span class="string">"name"</span>: <span class="string">"小明"</span>,</span><br><span class="line">            <span class="string">"age"</span>: <span class="number">18</span>,</span><br><span class="line">            <span class="string">"gender"</span>: <span class="literal">True</span>,</span><br><span class="line">            <span class="string">"height"</span>: <span class="number">1.75</span>&#125;</span><br></pre></td></tr></table></figure><ul><li>与列表比较<ul><li><strong>列表</strong> 是 <strong>有序</strong> 的对象集合</li><li><strong>字典</strong> 是 <strong>无序</strong> 的对象集合</li></ul></li><li>字典使用键值对存储数据<ul><li><strong>键</strong> <code>key</code> 是索引</li><li><strong>值</strong> <code>value</code> 是数据</li><li><strong>键</strong> 和 <strong>值</strong> 之间使用 <code>:</code> 分隔</li><li><strong>键必须是唯一的</strong></li><li><strong>值</strong> 可以取任何数据类型，但 <strong>键</strong> 只能使用 <strong>字符串</strong>、<strong>数字</strong>或 <strong>元组</strong></li></ul></li></ul><h5 id="字典常用方法"><a href="#字典常用方法" class="headerlink" title="字典常用方法"></a>字典常用方法</h5><ul><li>len()  获取键值对长度</li></ul><p><strong>读取所有</strong></p><ul><li>xiaoming.keys()  获取所有key  以列表的方式返回</li><li>xiaoming.values() 获取所有value 列表</li><li>xiaoming.items()  所有（key,values）元祖列表</li></ul><p><strong>读取单个</strong></p><ul><li>xiaoming[key] 可以从字典中取值，key不存在<strong>会报错</strong></li><li>xiaoming.get(key)  也可以从字典中取值，key不存在<strong>不会报错</strong></li></ul><p><strong>删除</strong></p><ul><li>del xiaoming.[key] 删除指定键值对，key不存在<strong>会报错</strong></li><li>xiaoming.pop(key) 删除指定键值对，key不存在<strong>会报错</strong></li><li>xiaoming.popitem() 随机删除一个键值对</li><li>xiaoming.clear() 清空键值对</li></ul><p><strong>修改</strong></p><ul><li>xiaoming[key] = value  如果key存在，修改数据。 key不存在,新建键值对</li><li>xiaoming.setdefault(key,value) 如果key存在，不动。 key不存在，修改为value。</li><li>xiaoming.update(字典2) 将字典2的数据合并到xiaoming中</li></ul><p><strong>其他</strong></p><ul><li>xiaoming.copy()  复制一份字典</li><li>xiaoming.fromkeys(seq[, value])  用于创建新字典，seq作为keys value 作为默认值。</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">8</span>]: xiaoming.fromkeys(<span class="string">"sdn"</span>,<span class="string">"qwe"</span>)</span><br><span class="line">Out[<span class="number">8</span>]: &#123;<span class="string">'s'</span>: <span class="string">'qwe'</span>, <span class="string">'d'</span>: <span class="string">'qwe'</span>, <span class="string">'n'</span>: <span class="string">'qwe'</span>&#125;</span><br></pre></td></tr></table></figure><h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string = <span class="string">"Hello Python"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> string:</span><br><span class="line">    print(c)</span><br></pre></td></tr></table></figure><ul><li>len(string) 获取字符串长度</li><li>string.count(字符串2)  字符串2 在string中出现的次数</li><li>string[索引] 从字符串中取出单个字符</li><li>string.index(字符串2)  字符串2 在string中第一次出现的索引</li></ul><h4 id="字符串常用操作"><a href="#字符串常用操作" class="headerlink" title="字符串常用操作"></a>字符串常用操作</h4><ul><li>在 <code>ipython3</code> 中定义一个 <strong>字符串</strong>，例如：<code>hello_str = &quot;&quot;</code></li><li>输入 <code>hello_str.</code> 按下 <code>TAB</code> 键，<code>ipython</code> 会提示 <strong>字符串</strong> 能够使用的 <strong>方法</strong> 如下：</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: hello_str.</span><br><span class="line">hello_str.capitalize    hello_str.isidentifier  hello_str.rindex</span><br><span class="line">hello_str.casefold      hello_str.islower       hello_str.rjust</span><br><span class="line">hello_str.center        hello_str.isnumeric     hello_str.rpartition</span><br><span class="line">hello_str.count         hello_str.isprintable   hello_str.rsplit</span><br><span class="line">hello_str.encode        hello_str.isspace       hello_str.rstrip</span><br><span class="line">hello_str.endswith      hello_str.istitle       hello_str.split</span><br><span class="line">hello_str.expandtabs    hello_str.isupper       hello_str.splitlines</span><br><span class="line">hello_str.find          hello_str.join          hello_str.startswith</span><br><span class="line">hello_str.format        hello_str.ljust         hello_str.strip</span><br><span class="line">hello_str.format_map    hello_str.lower         hello_str.swapcase</span><br><span class="line">hello_str.index         hello_str.lstrip        hello_str.title</span><br><span class="line">hello_str.isalnum       hello_str.maketrans     hello_str.translate</span><br><span class="line">hello_str.isalpha       hello_str.partition     hello_str.upper</span><br><span class="line">hello_str.isdecimal     hello_str.replace       hello_str.zfill</span><br><span class="line">hello_str.isdigit       hello_str.rfind</span><br></pre></td></tr></table></figure><blockquote><p>提示：正是因为 python 内置提供的方法足够多，才使得在开发时，能够针对字符串进行更加灵活的操作！应对更多的开发需求！</p></blockquote><h4 id="1-判断类型-9"><a href="#1-判断类型-9" class="headerlink" title="1) 判断类型 - 9"></a>1) 判断类型 - 9</h4><table><thead><tr><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>string.isspace()</td><td>如果 string 中只包含空格，则返回 True</td></tr><tr><td>string.isalnum()</td><td>如果 string 至少有一个字符并且所有字符都是字母或数字则返回 True</td></tr><tr><td>string.isalpha()</td><td>如果 string 至少有一个字符并且所有字符都是字母则返回 True</td></tr><tr><td>string.isdecimal()</td><td>如果 string 只包含数字则返回 True，<code>全角数字</code></td></tr><tr><td>string.isdigit()</td><td>如果 string 只包含数字则返回 True，<code>全角数字</code>、<code>⑴</code>、<code>\u00b2</code></td></tr><tr><td>string.isnumeric()</td><td>如果 string 只包含数字则返回 True，<code>全角数字</code>，<code>汉字数字</code></td></tr><tr><td>string.istitle()</td><td>如果 string 是标题化的(每个单词的首字母大写)则返回 True</td></tr><tr><td>string.islower()</td><td>如果 string 中包含至少一个区分大小写的字符，并且所有这些(区分大小写的)字符都是小写，则返回 True</td></tr><tr><td>string.isupper()</td><td>如果 string 中包含至少一个区分大小写的字符，并且所有这些(区分大小写的)字符都是大写，则返回 True</td></tr></tbody></table><h4 id="2-查找和替换-7"><a href="#2-查找和替换-7" class="headerlink" title="2) 查找和替换 - 7"></a>2) 查找和替换 - 7</h4><table><thead><tr><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>string.startswith(str)</td><td>检查字符串是否是以 str 开头，是则返回 True</td></tr><tr><td>string.endswith(str)</td><td>检查字符串是否是以 str 结束，是则返回 True</td></tr><tr><td>string.find(str, start=0, end=len(string))</td><td>检测 str 是否包含在 string 中，如果 start 和 end 指定范围，则检查是否包含在指定范围内，如果是返回开始的索引值，否则返回 <code>-1</code></td></tr><tr><td>string.rfind(str, start=0, end=len(string))</td><td>类似于 find()，不过是从右边开始查找</td></tr><tr><td>string.index(str, start=0, end=len(string))</td><td>跟 find() 方法类似，不过如果 str 不在 string 会报错</td></tr><tr><td>string.rindex(str, start=0, end=len(string))</td><td>类似于 index()，不过是从右边开始</td></tr><tr><td>string.replace(old_str, new_str, num=string.count(old))</td><td>把 string 中的 old_str 替换成 new_str，如果 num 指定，则替换不超过 num 次</td></tr></tbody></table><h4 id="3-大小写转换-5"><a href="#3-大小写转换-5" class="headerlink" title="3) 大小写转换 - 5"></a>3) 大小写转换 - 5</h4><table><thead><tr><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>string.capitalize()</td><td>把字符串的第一个字符大写</td></tr><tr><td>string.title()</td><td>把字符串的每个单词首字母大写</td></tr><tr><td>string.lower()</td><td>转换 string 中所有大写字符为小写</td></tr><tr><td>string.upper()</td><td>转换 string 中的小写字母为大写</td></tr><tr><td>string.swapcase()</td><td>翻转 string 中的大小写</td></tr></tbody></table><h4 id="4-文本对齐-3"><a href="#4-文本对齐-3" class="headerlink" title="4) 文本对齐 - 3"></a>4) 文本对齐 - 3</h4><table><thead><tr><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>string.ljust(width)</td><td>返回一个原字符串左对齐，并使用空格填充至长度 width 的新字符串</td></tr><tr><td>string.rjust(width)</td><td>返回一个原字符串右对齐，并使用空格填充至长度 width 的新字符串</td></tr><tr><td>string.center(width)</td><td>返回一个原字符串居中，并使用空格填充至长度 width 的新字符串</td></tr></tbody></table><h4 id="5-去除空白字符-3"><a href="#5-去除空白字符-3" class="headerlink" title="5) 去除空白字符 - 3"></a>5) 去除空白字符 - 3</h4><table><thead><tr><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>string.lstrip()</td><td>截掉 string 左边（开始）的空白字符</td></tr><tr><td>string.rstrip()</td><td>截掉 string 右边（末尾）的空白字符</td></tr><tr><td>string.strip()</td><td>截掉 string 左右两边的空白字符</td></tr></tbody></table><h4 id="6-拆分和连接-5"><a href="#6-拆分和连接-5" class="headerlink" title="6) 拆分和连接 - 5"></a>6) 拆分和连接 - 5</h4><table><thead><tr><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>string.partition(str)</td><td>把字符串 string 分成一个 3 元素的元组 (str前面, str, str后面)</td></tr><tr><td>string.rpartition(str)</td><td>类似于 partition() 方法，不过是从右边开始查找</td></tr><tr><td>string.split(str=””, num)</td><td>以 str 为分隔符拆分 string，如果 num 有指定值，则仅分隔 num + 1 个子字符串，str 默认包含 ‘\r’, ‘\t’, ‘\n’ 和空格</td></tr><tr><td>string.splitlines()</td><td>按照行(‘\r’, ‘\n’, ‘\r\n’)分隔，返回一个包含各行作为元素的列表</td></tr><tr><td>string.join(seq)</td><td>以 string 作为分隔符，将 seq 中所有的元素（的字符串表示）合并为一个新的字符串</td></tr></tbody></table><h3 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h3><p>切片适用于字符串，列表，元祖</p><ul><li><strong>切片</strong> 使用 <strong>索引值</strong> 来限定范围，从一个大的 <strong>字符串</strong> 中 <strong>切出</strong> 小的 <strong>字符串</strong></li><li><strong>列表</strong> 和 <strong>元组</strong> 都是 <strong>有序</strong> 的集合，都能够 <strong>通过索引值</strong> 获取到对应的数据</li><li><strong>字典</strong> 是一个 <strong>无序</strong> 的集合，是使用 <strong>键值对</strong> 保存数据</li></ul><p>字符串[开始索引:结束索引:步长]</p><p><strong>注意</strong>：</p><ol><li>指定的区间属于 <strong>左闭右开</strong> 型 <code>[开始索引,  结束索引)</code> =&gt; <code>开始索引 &lt;= 范围 &lt; 结束索引</code><ul><li>从 <code>起始</code> 位开始，到 <strong><code>结束</code>位的前一位</strong> 结束（<strong>不包含结束位本身</strong>)</li></ul></li><li>从头开始，<strong>开始索引</strong> <strong>数字可以省略，冒号不能省略</strong></li><li>到末尾结束，<strong>结束索引</strong> <strong>数字可以省略，冒号不能省略</strong></li><li>步长默认为 <code>1</code>，如果连续切片，<strong>数字和冒号都可以省略</strong></li></ol><h3 id="公共方法"><a href="#公共方法" class="headerlink" title="公共方法"></a>公共方法</h3><h4 id="pytohn内置函数"><a href="#pytohn内置函数" class="headerlink" title="pytohn内置函数"></a>pytohn内置函数</h4><table><thead><tr><th>函数</th><th>描述</th><th>备注</th></tr></thead><tbody><tr><td>len(item)</td><td>计算容器中元素个数</td><td></td></tr><tr><td>del(item)</td><td>删除变量</td><td>del 有两种方式</td></tr><tr><td>max(item)</td><td>返回容器中元素最大值</td><td>如果是字典，只针对 key 比较</td></tr><tr><td>min(item)</td><td>返回容器中元素最小值</td><td>如果是字典，只针对 key 比较</td></tr><tr><td>cmp(item1, item2)</td><td>比较两个值，-1 小于/0 相等/1 大于</td><td>Python 3.x 取消了 cmp 函数</td></tr></tbody></table><p><strong>注意</strong></p><ul><li><strong>字符串</strong> 比较符合以下规则： “0” &lt; “A” &lt; “a”</li></ul><h4 id="切片-1"><a href="#切片-1" class="headerlink" title="切片"></a>切片</h4><table><thead><tr><th align="center">描述</th><th>Python 表达式</th><th>结果</th><th>支持的数据类型</th></tr></thead><tbody><tr><td align="center">切片</td><td>“0123456789”[::-2]</td><td>“97531”</td><td>字符串、列表、元组</td></tr></tbody></table><ul><li><strong>切片</strong> 使用 <strong>索引值</strong> 来限定范围，从一个大的 <strong>字符串</strong> 中 <strong>切出</strong> 小的 <strong>字符串</strong></li><li><strong>列表</strong> 和 <strong>元组</strong> 都是 <strong>有序</strong> 的集合，都能够 <strong>通过索引值</strong> 获取到对应的数据</li><li><strong>字典</strong> 是一个 <strong>无序</strong> 的集合，是使用 <strong>键值对</strong> 保存数据</li></ul><h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4><table><thead><tr><th align="center">运算符</th><th>Python 表达式</th><th>结果</th><th>描述</th><th>支持的数据类型</th></tr></thead><tbody><tr><td align="center">+</td><td>[1, 2] + [3, 4]</td><td>[1, 2, 3, 4]</td><td>合并</td><td>字符串、列表、元组</td></tr><tr><td align="center">*</td><td>[“Hi!”] * 4</td><td>[‘Hi!’, ‘Hi!’, ‘Hi!’, ‘Hi!’]</td><td>重复</td><td>字符串、列表、元组</td></tr><tr><td align="center">in</td><td>3 in (1, 2, 3)</td><td>True</td><td>元素是否存在</td><td>字符串、列表、元组、字典</td></tr><tr><td align="center">not in</td><td>4 not in (1, 2, 3)</td><td>True</td><td>元素是否不存在</td><td>字符串、列表、元组、字典</td></tr><tr><td align="center">&gt; &gt;= == &lt; &lt;=</td><td>(1, 2, 3) &lt; (2, 2, 3)</td><td>True</td><td>元素比较</td><td>字符串、列表、元组</td></tr></tbody></table><p><strong>注意</strong></p><ul><li><code>in</code> 在对 <strong>字典</strong> 操作时，判断的是 <strong>字典的键</strong></li><li><code>in</code> 和 <code>not in</code> 被称为 <strong>成员运算符</strong></li></ul><h4 id="成员运算符"><a href="#成员运算符" class="headerlink" title="成员运算符"></a>成员运算符</h4><p>成员运算符用于 <strong>测试</strong> 序列中是否包含指定的 <strong>成员</strong></p><table><thead><tr><th>运算符</th><th>描述</th><th>实例</th></tr></thead><tbody><tr><td>in</td><td>如果在指定的序列中找到值返回 True，否则返回 False</td><td><code>3 in (1, 2, 3)</code> 返回 <code>True</code></td></tr><tr><td>not in</td><td>如果在指定的序列中没有找到值返回 True，否则返回 False</td><td><code>3 not in (1, 2, 3)</code> 返回 <code>False</code></td></tr></tbody></table><p>注意：在对 <strong>字典</strong> 操作时，判断的是 <strong>字典的键</strong></p><h4 id="完整的for循环语法"><a href="#完整的for循环语法" class="headerlink" title="完整的for循环语法"></a>完整的for循环语法</h4><ul><li>在 <code>Python</code> 中完整的 <code>for 循环</code> 的语法如下：</li></ul><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> 变量 <span class="keyword">in</span> 集合:</span><br><span class="line">    </span><br><span class="line">    循环体代码</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    没有通过 <span class="keyword">break</span> 退出循环，循环结束后，会执行的代码</span><br></pre></td></tr></table></figure><p>** for示例**</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">students = [</span><br><span class="line">    &#123;<span class="string">"name"</span>: <span class="string">"阿土"</span>,</span><br><span class="line">     <span class="string">"age"</span>: <span class="number">20</span>,</span><br><span class="line">     <span class="string">"gender"</span>: <span class="literal">True</span>,</span><br><span class="line">     <span class="string">"height"</span>: <span class="number">1.7</span>,</span><br><span class="line">     <span class="string">"weight"</span>: <span class="number">75.0</span>&#125;,</span><br><span class="line">    &#123;<span class="string">"name"</span>: <span class="string">"小美"</span>,</span><br><span class="line">     <span class="string">"age"</span>: <span class="number">19</span>,</span><br><span class="line">     <span class="string">"gender"</span>: <span class="literal">False</span>,</span><br><span class="line">     <span class="string">"height"</span>: <span class="number">1.6</span>,</span><br><span class="line">     <span class="string">"weight"</span>: <span class="number">45.0</span>&#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">find_name = <span class="string">"阿土"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> stu_dict <span class="keyword">in</span> students:</span><br><span class="line"></span><br><span class="line">    print(stu_dict)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 判断当前遍历的字典中姓名是否为find_name</span></span><br><span class="line">    <span class="keyword">if</span> stu_dict[<span class="string">"name"</span>] == find_name:</span><br><span class="line">        print(<span class="string">"找到了"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 如果已经找到，直接退出循环，就不需要再对后续的数据进行比较</span></span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>:  <span class="comment"># 这里是别的语言里面没有的</span></span><br><span class="line">    print(<span class="string">"没有找到"</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"循环结束"</span>)</span><br></pre></td></tr></table></figure>]]></content>
       
+      
+      <categories>
+          
+          <category> 学习 </category>
+          
+          <category> python3 </category>
+          
+      </categories>
       
       
         <tags>
