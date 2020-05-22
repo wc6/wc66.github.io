@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="05. Ansible 常用模块"><meta name="keywords"><meta name="author" content="蝶影双双"><meta name="copyright" content="蝶影双双"><meta name="theme-color" content="#0078E7"><title>05. Ansible 常用模块 | 蝶影双双的小镇</title><link rel="shortcut icon" href="/wc_favicon.ico"><link rel="mask-icon" href="/wc_favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    window.CONFIG = {"root":"/","title":"蝶影双双的小镇","version":"0.7.0","anonymous_image":"https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_rtqh36oinzl.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><link rel="preconnect" href="https://stats.g.doubleclick.net" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=UA-167189784-1"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-167189784-1');</script><script data-ad-client="ca-pub-6473747881546586" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><style>.google-auto-placed {
+  overflow: auto;
+}</style><div class="js-Pjax"></div><meta name="generator" content="Hexo 4.2.1"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle sidebar-toggle-fixed hty-icon-button"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><aside class="sidebar"><div class="sidebar-panel sidebar-panel-active" id="site-overview-wrap"><div class="site-info"><a class="site-author-avatar" href="/about" title="蝶影双双"><img width="96" loading="lazy" src="/wc.jpg" alt="蝶影双双"></a><div class="site-author-name"><a href="/about/">蝶影双双</a></div><a class="site-name" href="/about/site.html">蝶影双双的小镇</a><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="我的主页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item site-state-posts"><a href="/archives" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">29</span></a></div><div class="site-state-item site-state-categories"><a href="/categories" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">1</span></a></div><div class="site-state-item site-state-tags"><a href="/tags" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><a class="site-state-item hty-icon-button" href="https://www.baidu.com" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=3180573630&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/wc6" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:666wc6@gmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=296185253" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/320721469" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div></aside><main class="sidebar-translate" id="content"><div id="page"><header class="post-header"><h1 class="post-title">05. Ansible 常用模块</h1></header><article id="page"><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><h1 id="5-Ansible-常用模块"><a href="#5-Ansible-常用模块" class="headerlink" title="5. Ansible 常用模块"></a>5. Ansible 常用模块</h1><p>[toc]    </p>
+<html>
+
+<p>根据官方的分类，将模块按功能分类为：云模块、命令模块、数据库模块、文件模块、资产模块、消息模块、监控模块、网络模块、通知模块、包管理模块、源码控制模块、系统模块、单元模块、web设施模块、windows模块 ，具体可以参看官方页面。  
+这里从官方分类的模块里选择最常用的一些模块进行介绍。</p>
+
+<h1>ping模块</h1>
+
+<p>测试主机是否是通的，用法很简单，不涉及参数：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible <span class="built_in">test</span> -m ping</span><br></pre></td></tr></table></figure>
+
+<h2 id="authorized-key"><a href="#authorized-key" class="headerlink" title="authorized_key"></a>authorized_key</h2><p>用于向被控端推送公钥，通常用于在ansible第一次连接被控端时向其推送ansible主控端的管理公钥。</p>
+<p>常用选项：</p>
+<ul>
+<li>user: 指定将公钥推送给被控端的哪个用户</li>
+<li>key：指定被推送的公钥的内容</li>
+<li>path：默认情况下，会将公钥推送至被控端用户家目录的.ssh/authorized_keys文件中，可通过该配置项自定义该路径</li>
+<li>state：是推送还是删除，present|absent</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible test -m authorized_key -a &#39;user&#x3D;ansible key&#x3D;&quot;&#123;&#123; lookup(&#39;file&#39;,&#39;&#x2F;root&#x2F;.ssh&#x2F;id_rsa.pub&#39;)&#125;&#125;&quot;&#39;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>更多用法可参考<a href="https://docs.ansible.com/ansible/latest/modules/authorized_key_module.html?highlight=authorized_keys" target="_blank" rel="noopener">官方文档</a></p>
+</blockquote>
+<h2 id="file模块"><a href="#file模块" class="headerlink" title="file模块"></a>file模块</h2><p>file模块主要用于远程主机上的文件操作，file模块包含如下选项： </p>
+<ul>
+<li>force：需要在两种情况下强制创建软链接，一种是源文件不存在但之后会建立的情况下；另一种是目标软链接已存在,需要先取消之前的软链，然后创建新的软链，有两个选项：yes|no </li>
+<li>group：定义文件/目录的属组 </li>
+<li>mode：定义文件/目录的权限</li>
+<li>owner：定义文件/目录的属主</li>
+<li>path：必选项，定义文件/目录的路径</li>
+<li>src：要被链接的源文件的路径，只应用于state=link的情况</li>
+<li>dest：被链接到的路径，只应用于state=link的情况 </li>
+<li>state：  <ul>
+<li>directory：如果目录不存在，创建目录</li>
+<li>file：即使文件不存在，也不会被创建</li>
+<li>link：创建软链接</li>
+<li>hard：创建硬链接</li>
+<li>touch：如果文件不存在，则会创建一个新的文件，如果文件或目录已存在，则更新其最后修改时间</li>
+<li>absent：删除目录、文件或者取消链接文件</li>
+</ul>
+</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ansible 192.168.8.120 -m file -a <span class="string">'path=/tmp/test.txt state=touch owner=root group=root mode=644'</span></span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m file -a <span class="string">'src=/tmp/test.txt dest=/root/test.txt state=link'</span></span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m file -a <span class="string">'path=/tmp/test.txt state=file'</span></span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m file -a <span class="string">'path=/tmp/test state=directory owner=root group=root mode=755'</span></span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m file -a <span class="string">'path=/tmp/test2/test3/aaa/bbb state=directory owner=root group=root mode=755'</span></span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m file -a <span class="string">'path=/tmp/test2 state=absent'</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>更多用法可参考<a href="https://docs.ansible.com/ansible/latest/modules/file_module.html?highlight=file" target="_blank" rel="noopener">官方文档</a></p>
+</blockquote>
+<h2 id="copy模块"><a href="#copy模块" class="headerlink" title="copy模块"></a>copy模块</h2><p>复制文件到远程主机，copy模块包含如下选项：</p>
+<ul>
+<li>backup：在覆盖之前将原文件备份，备份文件包含时间信息。有两个选项：yes|no </li>
+<li>content：用于替代”src”,可以直接设定指定文件的值 </li>
+<li>dest：必选项。要将源文件复制到的远程主机的绝对路径，如果源文件是一个目录，那么该路径也必须是个目录 </li>
+<li>force：如果目标主机包含该文件，但内容不同，如果设置为yes，则强制覆盖，如果为no，则只有当目标主机的目标位置不存在该文件时，才复制。默认为yes</li>
+<li>others：所有的file模块里的相关文件属性选项都可以在这里使用</li>
+<li>src：要复制到远程主机的文件在本地的地址，可以是绝对路径，也可以是相对路径。如果路径是一个目录，它将递归复制。在这种情况下，如果路径使用”/“来结尾，则只复制目录里的内容，如果没有使用”/“来结尾，则包含目录在内的整个内容全部复制，类似于rsync。 </li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ansible 192.168.8.120 -m copy -a &#39;src&#x3D;&#x2F;etc&#x2F;ansible&#x2F;ansible.cfg dest&#x3D;&#x2F;usr&#x2F;local&#x2F;src&#x2F; owner&#x3D;root group&#x3D;root mode&#x3D;644&#39;</span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m copy -a &#39;backup&#x3D;yes src&#x3D;&#x2F;etc&#x2F;fstab dest&#x3D;&#x2F;usr&#x2F;local&#x2F;src&#x2F;ansible.cfg owner&#x3D;root group&#x3D;root mode&#x3D;644&#39;</span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m copy -a &#39;content&#x3D;&quot;just a test!&quot; dest&#x3D;&#x2F;usr&#x2F;local&#x2F;src&#x2F;test.txt&#39;</span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m copy -a &#39;src&#x3D;&#x2F;data dest&#x3D;&#x2F;usr&#x2F;local&#x2F;src&#x2F;&#39;</span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m copy -a &#39;src&#x3D;&#x2F;data&#x2F; dest&#x3D;&#x2F;usr&#x2F;local&#x2F;src&#x2F;&#39;</span><br><span class="line"></span><br><span class="line">ansible 192.168.8.120 -m copy -a &quot;src&#x3D;&#x2F;mine&#x2F;sudoers dest&#x3D;&#x2F;etc&#x2F;sudoers validate&#x3D;&#39;visudo -cf %s&#39;&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="yum模块"><a href="#yum模块" class="headerlink" title="yum模块"></a>yum模块</h2><p>使用yum包管理器来管理软件包，其选项有： </p>
+<ul>
+<li><code>name</code>：要进行操作的软件包的名字，也可以传递一个url或者一个本地的rpm包的路径 </li>
+<li><code>state</code>：状态（present，absent，latest）</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ansible test -m yum -a &#39;name&#x3D;httpd state&#x3D;latest&#39;</span><br><span class="line">ansible test -m yum -a &#39;name&#x3D;&quot;@Development tools&quot; state&#x3D;present&#39;</span><br><span class="line">ansible test -m yum -a &#39;name&#x3D;http:&#x2F;&#x2F;nginx.org&#x2F;packages&#x2F;centos&#x2F;6&#x2F;noarch&#x2F;RPMS&#x2F;nginx-release-centos-6-0.el6.ngx.noarch.rpm state&#x3D;present&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="service模块"><a href="#service模块" class="headerlink" title="service模块"></a>service模块</h2><p>用于管理服务<br>该模块包含如下选项： </p>
+<ul>
+<li>arguments：给命令行提供一些选项 </li>
+<li>enabled：是否开机启动 yes|no</li>
+<li>name：必选项，服务名称 </li>
+<li>pattern：定义一个模式，如果通过status指令来查看服务的状态时，没有响应，就会通过ps指令在进程中根据该模式进行查找，如果匹配到，则认为该服务依然在运行</li>
+<li>runlevel：运行级别</li>
+<li>sleep：如果执行了restarted，在则stop和start之间沉睡几秒钟</li>
+<li>state：对当前服务执行启动，停止、重启、重新加载等操作（started,stopped,restarted,reloaded）</li>
+<li>daemon_reload：针对使用systemd的系统，重新加载systemd配置，yes/no</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ansible test -m service -a &quot;name&#x3D;httpd state&#x3D;started enabled&#x3D;yes&quot;</span><br><span class="line">asnible test -m service -a &quot;name&#x3D;foo pattern&#x3D;&#x2F;usr&#x2F;bin&#x2F;foo state&#x3D;started&quot;</span><br><span class="line">ansible test -m service -a &quot;name&#x3D;network state&#x3D;restarted args&#x3D;eth0&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="systemd模块"><a href="#systemd模块" class="headerlink" title="systemd模块"></a>systemd模块</h2><ul>
+<li>daemon_reload：当服务配置文件发生变更时重载服务</li>
+<li>name：指定服务名称</li>
+<li>enabled：是否设置开机自启</li>
+<li>state：管理服务状态，reloaded|restarted|started|stopped</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible test -m systemd -a &quot;name&#x3D;httpd state&#x3D;started enabled&#x3D;yes daemon_reload&#x3D;yes&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="cron模块"><a href="#cron模块" class="headerlink" title="cron模块"></a>cron模块</h2><p>用于管理计划任务  </p>
+<p>包含如下选项： </p>
+<ul>
+<li>backup：对远程主机上的原任务计划内容修改之前做备份 </li>
+<li>cron_file：如果指定该选项，则用该文件替换远程主机上的cron.d目录下的用户的任务计划 </li>
+<li>day：日（1-31，<em>，</em>/2,……） </li>
+<li>hour：小时（0-23，<em>，</em>/2，……）  </li>
+<li>minute：分钟（0-59，<em>，</em>/2，……） </li>
+<li>month：月（1-12，<em>，</em>/2，……） </li>
+<li>weekday：周（0-7，*，……）</li>
+<li>job：要执行的任务，依赖于state=present </li>
+<li>name：该任务的描述 </li>
+<li>special_time：指定什么时候执行，参数：reboot,yearly,annually,monthly,weekly,daily,hourly </li>
+<li>state：确认该任务计划是创建还是删除 </li>
+<li>user：以哪个用户的身份执行</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ansible <span class="built_in">test</span> -m cron -a <span class="string">'name="a job for reboot" special_time=reboot job="/some/job.sh"'</span></span><br><span class="line">ansible <span class="built_in">test</span> -m cron -a <span class="string">'name="yum autoupdate" weekday="2" minute=0 hour=12 user="root"'</span></span><br><span class="line">ansible <span class="built_in">test</span> -m cron  -a <span class="string">'backup="True" name="test" minute="0" hour="5,2" job="ls -alh &gt; /dev/null"'</span></span><br><span class="line">ansilbe <span class="built_in">test</span> -m cron -a <span class="string">'cron_file=ansible_yum-autoupdate state=absent'</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="group模块"><a href="#group模块" class="headerlink" title="group模块"></a>group模块</h2><p>goup模块请求的是groupadd, groupdel, groupmod 三个指令。</p>
+<ul>
+<li>gid：指定组id</li>
+<li>name：指定组名</li>
+<li>state：创建还是删除组，选项：present|absent</li>
+<li>system：是否将该组创建为系统组，默认为no</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible test -m group -a &#39;name&#x3D;test gid&#x3D;1001 state&#x3D;present system&#x3D;yes&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="user模块"><a href="#user模块" class="headerlink" title="user模块"></a>user模块</h2><p>user模块是请求的是useradd, userdel, usermod三个指令</p>
+<ul>
+<li>home：指定用户的家目录，需要与createhome配合使用</li>
+<li>groups：指定用户的附加组</li>
+<li>group：指定用户属组</li>
+<li>uid：指定用的uid</li>
+<li>password：指定用户的密码</li>
+<li>name：指定用户名</li>
+<li>createhome：是否创建家目录 yes|no</li>
+<li>system：是否为系统用户</li>
+<li>comment：定义用户描述信息</li>
+<li>remove：当state=absent时，remove=yes则表示连同家目录一起删除，等价于userdel -r</li>
+<li>state：是创建还是删除</li>
+<li>shell：指定用户的shell环境</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">user: name=johnd comment=<span class="string">"John Doe"</span> uid=1040 group=admin</span><br><span class="line">user: name=james shell=/bin/bash groups=admins,developers append=yes user: name=johnd state=absent remove=yes</span><br><span class="line">user: name=james18 shell=/bin/zsh groups=developers expires=1422403387</span><br><span class="line"><span class="comment">#生成密钥时，只会生成公钥文件和私钥文件，和直接使用ssh-keygen指令效果相同，不会生成authorized_keys文件</span></span><br><span class="line">user: name=<span class="built_in">test</span> generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa</span><br></pre></td></tr></table></figure>
+
+<p>需要说明的是，在指定password参数时，不能使用明文密码，因为后面这一串密码会被直接传送到被管理主机的/etc/shadow文件中，所以需要先将密码字符串进行加密处理。然后将得到的字符串放到password中即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;123456&quot; | openssl passwd -1 -salt $(&lt; &#x2F;dev&#x2F;urandom tr -dc &#39;[:alnum:]&#39; | head -c 32) -stdin</span><br><span class="line">$1$4P4PlFuE$ur9ObJiT5iHNrb9QnjaIB0</span><br><span class="line"></span><br><span class="line">#使用上面的密码创建用户</span><br><span class="line">ansible all -m user -a &#39;name&#x3D;foo password&#x3D;&quot;$1$4P4PlFuE$ur9ObJiT5iHNrb9QnjaIB0&quot;&#39;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>不同的发行版默认使用的加密方式可能会有区别，具体可以查看/etc/login.defs文件确认，centos 7使用的是SHA512加密算法。</p>
+</blockquote>
+<h2 id="synchronize模块"><a href="#synchronize模块" class="headerlink" title="synchronize模块"></a>synchronize模块</h2><p>使用rsync同步文件，其参数如下：</p>
+<ul>
+<li>archive: 归档，相当于同时开启recursive(递归)、links、perms、times、owner、group、-D选项都为yes ，默认该项为开启</li>
+<li>checksum: 跳过检测sum值，默认关闭</li>
+<li>compress:是否开启压缩</li>
+<li>copy_links：复制链接文件，默认为no ，注意后面还有一个links参数</li>
+<li>delete: 删除不存在的文件，默认no</li>
+<li>dest：目录路径</li>
+<li>dest_port：默认目录主机上的端口 ，默认是22，走的ssh协议</li>
+<li>dirs：传输目录不进行递归，默认为no，即进行目录递归</li>
+<li>rsync_opts：rsync参数部分</li>
+<li>set_remote_user：主要用于/etc/ansible/hosts中定义或默认使用的用户与rsync使用的用户不同的情况</li>
+<li>mode: push或pull 模块，push模式的话，一般用于从本机向远程主机上传文件，pull 模式用于从远程主机上取文件</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">src&#x3D;some&#x2F;relative&#x2F;path dest&#x3D;&#x2F;some&#x2F;absolute&#x2F;path rsync_path&#x3D;&quot;sudo rsync&quot;</span><br><span class="line">src&#x3D;some&#x2F;relative&#x2F;path dest&#x3D;&#x2F;some&#x2F;absolute&#x2F;path archive&#x3D;no links&#x3D;yes</span><br><span class="line">src&#x3D;some&#x2F;relative&#x2F;path dest&#x3D;&#x2F;some&#x2F;absolute&#x2F;path checksum&#x3D;yes times&#x3D;no</span><br><span class="line">src&#x3D;&#x2F;tmp&#x2F;helloworld dest&#x3D;&#x2F;var&#x2F;www&#x2F;helloword rsync_opts&#x3D;--no-motd,--exclude&#x3D;.git mode&#x3D;pull</span><br></pre></td></tr></table></figure>
+
+<h2 id="filesystem模块"><a href="#filesystem模块" class="headerlink" title="filesystem模块"></a>filesystem模块</h2><p>在块设备上创建文件系统<br>常用选项： </p>
+<ul>
+<li>dev：目标块设备</li>
+<li>force：在一个已有文件系统的设备上强制创建</li>
+<li>fstype：文件系统的类型</li>
+<li>opts：传递给mkfs命令的选项</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ansible <span class="built_in">test</span> -m filesystem -a <span class="string">'fstype=ext2 dev=/dev/sdb1 force=yes'</span></span><br><span class="line">ansible <span class="built_in">test</span> -m filesystem -a <span class="string">'fstype=ext4 dev=/dev/sdb1 opts="-cc"'</span></span><br></pre></td></tr></table></figure>
+<h2 id="mount模块"><a href="#mount模块" class="headerlink" title="mount模块"></a>mount模块</h2><p>配置挂载点<br>选项： </p>
+<ul>
+<li>boot：是否开机自动挂载</li>
+<li>fstype：必选项，挂载文件的类型 </li>
+<li>name：必选项，挂载点 </li>
+<li>opts：传递给mount命令的参数</li>
+<li>src：必选项，要挂载的文件 </li>
+<li>state：必选项 <ul>
+<li>present：只处理fstab中的配置 </li>
+<li>absent：删除挂载点 </li>
+<li>mounted：自动创建挂载点并挂载之 </li>
+<li>umounted：卸载</li>
+</ul>
+</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">name&#x3D;&#x2F;mnt&#x2F;dvd src&#x3D;&#x2F;dev&#x2F;sr0 fstype&#x3D;iso9660 opts&#x3D;ro state&#x3D;present</span><br><span class="line">name&#x3D;&#x2F;srv&#x2F;disk src&#x3D;&#39;LABEL&#x3D;SOME_LABEL&#39; state&#x3D;present</span><br><span class="line">name&#x3D;&#x2F;home src&#x3D;&#39;UUID&#x3D;b3e48f45-f933-4c8e-a700-22a159ec9077&#39; opts&#x3D;noatime state&#x3D;present</span><br><span class="line"></span><br><span class="line">ansible test -a &#39;dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;disk.img bs&#x3D;4k count&#x3D;1024&#39;</span><br><span class="line">ansible test -a &#39;losetup &#x2F;dev&#x2F;loop0 &#x2F;disk.img&#39;</span><br><span class="line">ansible test -m filesystem &#39;fstype&#x3D;ext4 force&#x3D;yes opts&#x3D;-F dev&#x3D;&#x2F;dev&#x2F;loop0&#39;</span><br><span class="line">ansible test -m mount &#39;name&#x3D;&#x2F;mnt src&#x3D;&#x2F;dev&#x2F;loop0 fstype&#x3D;ext4 state&#x3D;mounted opts&#x3D;rw&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="get-url-模块"><a href="#get-url-模块" class="headerlink" title="get_url 模块"></a>get_url 模块</h2><p>该模块主要用于从http、ftp、https服务器上下载文件（类似于wget），主要有如下选项：</p>
+<ul>
+<li>sha256sum：下载完成后进行sha256 check；</li>
+<li>timeout：下载超时时间，默认10s</li>
+<li>url：下载的URL</li>
+<li>url_password、url_username：主要用于需要用户名密码进行验证的情况</li>
+<li>use_proxy：是事使用代理，代理需事先在环境变更中定义</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">get_url: url&#x3D;http:&#x2F;&#x2F;example.com&#x2F;path&#x2F;file.conf dest&#x3D;&#x2F;etc&#x2F;foo.conf mode&#x3D;0440</span><br><span class="line">get_url: url&#x3D;http:&#x2F;&#x2F;example.com&#x2F;path&#x2F;file.conf dest&#x3D;&#x2F;etc&#x2F;foo.conf sha256sum&#x3D;b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</span><br></pre></td></tr></table></figure>
+
+<h2 id="unarchive模块"><a href="#unarchive模块" class="headerlink" title="unarchive模块"></a>unarchive模块</h2><p>用于解压文件，模块包含如下选项：</p>
+<ul>
+<li>remote_src：如果为yes，则文件会从master端复制到目标端。否则会直接尝试从目标端查找文件。默认为no。</li>
+<li>creates：指定一个文件名，当该文件存在时，则解压指令不执行</li>
+<li>dest：远程主机上的一个路径，即文件解压的路径 </li>
+<li>group：解压后的目录或文件的属组</li>
+<li>list_files：如果为yes，则会列出压缩包里的文件，默认为no，2.0版本新增的选项</li>
+<li>mode：解决后文件的权限</li>
+<li>src：如果copy为yes，则需要指定压缩文件的源路径 </li>
+<li>owner：解压后文件或目录的属主</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- unarchive: src&#x3D;foo.tgz dest&#x3D;&#x2F;var&#x2F;lib&#x2F;foo</span><br><span class="line">- unarchive: src&#x3D;&#x2F;tmp&#x2F;foo.zip dest&#x3D;&#x2F;usr&#x2F;local&#x2F;bin copy&#x3D;no</span><br><span class="line">- unarchive: src&#x3D;https:&#x2F;&#x2F;example.com&#x2F;example.zip dest&#x3D;&#x2F;usr&#x2F;local&#x2F;bin remote_src&#x3D;yes</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="assemble"><a href="#assemble" class="headerlink" title="assemble"></a>assemble</h2><p>用于组装文件，即将多个零散的文件，合并一个大文件  </p>
+<p>常用参数：</p>
+<ul>
+<li>src：原文件(即零散文件)的路径</li>
+<li>dest：合并后的大文件路径</li>
+<li>group：合并后的大文件的属组</li>
+<li>owner：合并后的大文件的属主</li>
+<li>mode：合并后的大文件的权限</li>
+<li>validate：与template的validate相同，指定命令验证文件</li>
+<li>ignore_hidden：组装时，是否忽略隐藏文件，默认为no，该参数在2.0版本中新增</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">all</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Make</span> <span class="string">a</span> <span class="string">Directory</span> <span class="string">in</span> <span class="string">/opt</span></span><br><span class="line">      <span class="attr">file:</span> <span class="string">path=/opt/sshkeys</span> <span class="string">state=directory</span> <span class="string">owner=root</span> <span class="string">group=root</span> <span class="string">mode=0700</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Copy</span> <span class="string">SSH</span> <span class="string">keys</span> <span class="string">over</span></span><br><span class="line">      <span class="attr">copy:</span> <span class="string">src=keys/&#123;&#123;</span> <span class="string">item</span> <span class="string">&#125;&#125;.pub</span> <span class="string">dest=/opt/sshkeys/&#123;&#123;</span> <span class="string">item</span> <span class="string">&#125;&#125;.pub</span> <span class="string">owner=root</span> <span class="string">group=root</span> <span class="string">mode=0600</span></span><br><span class="line">      <span class="attr">with_items:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="string">dan</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="string">kate</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="string">mal</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Make</span> <span class="string">the</span> <span class="string">root</span> <span class="string">users</span> <span class="string">SSH</span> <span class="string">config</span> <span class="string">directory</span></span><br><span class="line">      <span class="attr">file:</span> <span class="string">path=/root/.ssh</span> <span class="string">state=directory</span> <span class="string">owner=root</span> <span class="string">group=root</span> <span class="string">mode=0700</span></span><br><span class="line">      </span><br><span class="line">    <span class="comment">#将/opt/sshkeys目录里所有的文件合并到/root/.ssh/authorized_keys一个文件中</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span> <span class="string">the</span> <span class="string">authorized_keys</span> <span class="string">file</span></span><br><span class="line">      <span class="attr">assemble:</span> <span class="string">src=/opt/sshkeys/</span> <span class="string">dest=/root/.ssh/authorized_keys</span> <span class="string">owner=root</span> <span class="string">group=root</span> <span class="string">mode=0700</span></span><br></pre></td></tr></table></figure>
+</div></section></article><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">捐款或者加个好友呗！</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/alipay-qrcode.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/alipay-qrcode.jpg" alt="支付宝捐款" title="支付宝捐款"></a><div><span style="color:#00A3EE"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-alipay-line"></use></svg></span></div></div><div style="display:inline-block"><a href="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/qq.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/qq.jpg" alt="QQ加友" title="QQ加友"></a><div><span style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></span></div></div><div style="display:inline-block"><a href="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/wechat.png" target="_blank" rel="noopener"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/wc6/cdn@6.6/img/donate/wechat.png" alt="微信加友" title="微信加友"></a><div><span style="color:#2DC100"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-wechat-pay-line"></use></svg></span></div></div></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>若您无 GitHub 账号，可直接在下方匿名评论。</span><br><span>若您想及时得到回复提醒，建议跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/wc6/wc6.github.io/issues?q=is:issue+05. Ansible 常用模块" target="_blank" rel="noopener">GitHub Issues</a></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 蝶影双双</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v4.2.1</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v0.7.0</span></div><div class="live_time"><span>本博客已萌萌哒地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-05-20T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script defer src="/js/search/index.js"></script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div id="local-search-result"></div></div></div><script defer src="/js/hexo-theme-yun.js"></script></body></html>
