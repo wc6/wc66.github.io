@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>kubernetes原理</title>
+      <link href="/2020/05/27/kubernetes%E5%8E%9F%E7%90%86/"/>
+      <url>/2020/05/27/kubernetes%E5%8E%9F%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<h3 id="kubernetes"><a href="#kubernetes" class="headerlink" title="kubernetes"></a>kubernetes</h3><h4 id="kubernetes-原理"><a href="#kubernetes-原理" class="headerlink" title="kubernetes 原理"></a>kubernetes 原理</h4><ol><li><p>kubernetes 架构</p><ol><li><p>master节点</p><ol><li>api server  k8s 网管，所有的指令请求都必须经过api server</li><li>scheduler  调度器，使用调度算法，把请求资源调度某一node节点</li><li><strong>controller</strong>  控制器，维护k8s资源对象</li><li>etcd  存储资源对象</li></ol></li><li><p>node节点</p><ol><li>docker  运行容器的基础，容器引擎</li><li>*<em>kubelet *</em>在每一个node节点上都存在一份，在node节点上的资源操作指令由kubelet来执行</li><li><strong>kube-proxy</strong>  代理服务，负载均衡</li><li>fluentd  日志收集服务</li><li><strong>pod</strong>是k8s管理的基本单元（最小单元），pod内部的是容器，k8s不直接管理容器，而是管理pod</li></ol><p>关系： 一个master对应一群node节点</p></li></ol></li></ol><h4 id="kubernetes-核心组件原理"><a href="#kubernetes-核心组件原理" class="headerlink" title="kubernetes 核心组件原理"></a>kubernetes 核心组件原理</h4><p><strong>特点</strong></p><ul><li>master节点不存储容器，只负责调度，网管，控制器，资源对象存储</li><li>容器存储在node节点（容器是存储在pod内部的）</li><li>pod内部可以有一个容器，也可以有多个容器</li><li>kubelet负责本地pod的维护</li><li>kube-proxy负责负载均衡，在多个pod之间来做负载均衡</li></ul><ol><li><p>pod 核心组件原理</p><ol><li>pod是什么？<ol><li>pod是一个容器，用来装docker创建的容器，pod是一台虚拟化分组，相当于沙箱环境。pod拥有自己的IP port</li></ol></li><li>核心问题：pod用来干什么？<ol><li>通常情况下，在服务部署的时候，使用pod来管理一组相关的服务</li><li>一组相关的服务：nginx+web+mysql</li></ol></li><li>集群怎么实现？<ol><li>复制多个pod副本，扩容及缩容–&gt;控制pod数量</li></ol></li><li>pod底层网络，数据存储是如何进行的？<ol><li>一个pod下面有nginx容器，web容器，MySQL容器，每个镜像都有单独的IP与端口，如果直接访问IP,会很慢的。此时有一个pause容器</li><li>pause容器作用： 共享网络，共享存储</li><li>镜像之间用localhost访问，此时效率将提高</li><li>所以务必先创建pause容器</li></ol></li></ol></li><li><p>ReplicaSet副本控制器</p><ol><li><p>replicationController副本控制器与replicaSet副本控制器的差异？</p><ol><li><p>副本控制器基本理解：控制pod数量与预期的设置数量保持一致。都能实现这个功能</p></li><li><p>ReplicaSet可以使用标签选择器</p><ul><li>单选</li><li>复合选择</li></ul></li><li><p>replicationController可以使用标签选择器</p><ul><li>单选</li></ul></li><li><p>单选与复合选择举例：</p><p>selector:</p><p>​    app = web  # 只有这个选择就是单选</p><p>​    release = stable  # app与release一起选择，就是复合选择</p><ol start="5"><li>在新版中，使用replicaSet</li></ol></li></ol></li></ol></li><li><p>Deployment资源部署对象</p><ol><li>服务部署结构模型<ol><li>*<em>Deployment  *</em> 管理ReplicaSet</li><li>*<em>ReplicaSet  *</em>管理多个pod</li><li><strong>pod</strong> <strong>pod</strong> <strong>pod</strong>  </li><li>ReplicaSet不支持滚动更新，</li><li>Deployment支持滚动更新，因此，通常与ReplicaSet一起使用</li></ol></li><li>滚动更新<ol><li>新建pod,删除旧的pod,类似于热部署</li><li>建立新的RS(ReplicaSet)</li><li>建立新的pod</li><li>旧版本的RS(ReplicaSet)不会删除，如果新版本的ReplicaSet有问题，将会回滚到旧版本的ReplicaSet</li><li>但是旧版本的pod会删除</li></ol></li></ol></li><li><p>StatefulSet  部署有状态服务：解决有状态服务使用容器化部署的问题</p><ol><li>部署模型<ol><li>*<em>StatefulSet  *</em> 管理ReplicaSet</li><li>*<em>ReplicaSet  *</em>管理多个pod</li><li>*<em>pod  *</em> *<em>pod  *</em> *<em>pod  *</em></li><li><strong>PVC 文件系统</strong>  上面所有的pod的数据存到这里面来</li><li>StatfulSet 保证pod重新建立后，hostname不会发生变化，pod就可以通过hostname来关联数据，以此保证数据不丢失</li></ol></li><li>有状态服务<ol><li>有<strong>实时</strong>的数据需要存储<ol><li>有状态服务集群中，把某一服务抽离出去，一段时间后就入机器网络，如果集群网络无法使用，则就是有状态服务    </li></ol></li></ol></li><li>无状态服务<ol><li>没有<strong>实时</strong>的数据需要存储</li><li>有状态服务集群中，把某一服务抽离出去，一段时间后就入机器网络，如果对集群没有影响，则就是无状态服务</li></ol></li><li>问题：MySQL宕机，pod重启，数据丢失等等。</li><li>所以有状态服务（MySQL，pod等服务）不能使用Deployment模型来部署，只能部署无状态的服务</li><li>有状态服务使用statefulSet部署模型</li></ol></li></ol><h4 id="kubernetes服务注册与发现"><a href="#kubernetes服务注册与发现" class="headerlink" title="kubernetes服务注册与发现"></a>kubernetes服务注册与发现</h4><p>pod生产环境中 ，访问流程</p><p>认识service   VIP ( virtual Ip)</p><ol><li><p>service服务发现-pod如何对外网提供服务</p><ol><li>将物理机的端口与pod的端口进行映射，这样就可以进行数据包的转发</li></ol></li><li><p>service服务发现-负载均衡访问问题的思考</p><ol><li>一组相关的pod副本如何实现负载均衡？</li><li>不能使用nginx做负载均衡：有些pod在动态的变化（IP，hostname)等，尤其是版本的更新，迭代</li></ol></li><li><p>service服务发现-实现负载均衡的基本原理</p><ol><li>service：<ul><li>pod ip  pod的IP地址</li><li>node  IP  node的IP地址</li><li>cluster IP  虚拟IP  是由kubernetes 抽象出来的service对象，这个service独享就是一个VIP资源对象</li></ul></li><li>如何利用service来实现负载均衡</li><li>*<em>service VIP   *</em>  10.12.22.16：80</li><li>*<em>node1  *</em>                       *<em>node2  *</em>    所有node节点相同的服务pod</li><li>pod支付  <strong>pod订单</strong>       <strong>pod订单</strong>     <strong>pod订单</strong></li></ol></li><li><p>service服务发现-实现负载均衡的原理深入</p><ol><li><p>service 和pod 都是一个进程，service也不能对外提供服务</p></li><li><p>service与pod之间可以通过局域网通信</p></li><li><p>当请求交给service之后，service使用iptables/ipvs 做数据包的分发</p><p>稍后更新图片</p></li></ol></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> 学习 </category>
+          
+          <category> kubernetes原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> kubernetes </tag>
+            
+            <tag> 运维管理 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Centos install sftp</title>
       <link href="/2020/05/22/Centos-install-sftp/"/>
       <url>/2020/05/22/Centos-install-sftp/</url>
